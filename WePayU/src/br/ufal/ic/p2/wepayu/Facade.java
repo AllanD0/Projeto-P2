@@ -2,7 +2,6 @@ package br.ufal.ic.p2.wepayu;
 
 import br.ufal.ic.p2.wepayu.controller.SistemaFolha;
 import java.time.format.DateTimeParseException;
-import java.io.IOException;
 
 public class Facade {
     private SistemaFolha sistemaFolha;
@@ -23,52 +22,78 @@ public class Facade {
         if (salario == null || salario.isEmpty()) throw new Exception("Salario nao pode ser nulo.");
         try {
             double salarioNumerico = Double.parseDouble(salario.replace(',', '.'));
-            return this.sistemaFolha.criarEmpregado(nome, endereco, tipo, salarioNumerico);
+
+            return this.sistemaFolha.criarEmpregado(nome, endereco, tipo, salarioNumerico, null);
         } catch (NumberFormatException e) {
             throw new Exception("Salario deve ser numerico.");
         }
     }
 
     public String criarEmpregado(String nome, String endereco, String tipo, String salario, String comissao) throws Exception {
+        if (salario == null || salario.isEmpty()) throw new Exception("Salario nao pode ser nulo.");
         if (comissao == null || comissao.isEmpty()) throw new Exception("Comissao nao pode ser nula.");
+
+        double salarioNumerico;
         try {
-            double salarioNumerica = Double.parseDouble(salario.replace(',', '.'));
+            salarioNumerico = Double.parseDouble(salario.replace(',', '.'));
+        } catch (NumberFormatException e) {
+            throw new Exception("Salario deve ser numerico.");
+        }
+
+        try {
             double comissaoNumerica = Double.parseDouble(comissao.replace(',', '.'));
-            return this.sistemaFolha.criarEmpregado(nome, endereco, tipo, salarioNumerica, comissaoNumerica);
+            return this.sistemaFolha.criarEmpregado(nome, endereco, tipo, salarioNumerico, comissaoNumerica);
         } catch (NumberFormatException e) {
             throw new Exception("Comissao deve ser numerica.");
         }
     }
-
     public void alteraEmpregado(String emp, String atributo, String valor) throws Exception {
         this.sistemaFolha.alteraEmpregado(emp, atributo, valor);
     }
 
-    public void alteraEmpregado(String emp, String atributo, String valor, String valorExtra) throws Exception {
-        this.sistemaFolha.alteraEmpregado(emp, atributo, valor, valorExtra);
+    public void alteraEmpregado(String emp, String atributo, String valor, String valor2) throws Exception {
+        this.sistemaFolha.alteraEmpregado(emp, atributo, valor, valor2);
     }
 
+
     public void alteraEmpregado(String emp, String atributo, String valor, String idSindicato, String taxaSindical) throws Exception {
-        if (!"sindicalizado".equalsIgnoreCase(atributo)) throw new Exception("Atributo nao existe.");
-        if (!"true".equalsIgnoreCase(valor)) throw new Exception("Valor deve ser true.");
-        if (idSindicato == null || idSindicato.isEmpty()) throw new Exception("Identificacao do sindicato nao pode ser nula.");
-        if (taxaSindical == null || taxaSindical.isEmpty()) throw new Exception("Taxa sindical nao pode ser nula.");
+        if (!"sindicalizado".equalsIgnoreCase(atributo)) {
+            throw new Exception("Atributo nao existe.");
+        }
+
+        if (!"true".equalsIgnoreCase(valor) && !"false".equalsIgnoreCase(valor)) {
+            throw new Exception("Valor deve ser true ou false.");
+        }
+
+        boolean ehSindicalizado = "true".equalsIgnoreCase(valor);
+
+        if (ehSindicalizado) {
+            if (idSindicato == null || idSindicato.isEmpty()) throw new Exception("Identificacao do sindicato nao pode ser nula.");
+            if (taxaSindical == null || taxaSindical.isEmpty()) throw new Exception("Taxa sindical nao pode ser nula.");
+        }
+
         try {
-            double taxa = Double.parseDouble(taxaSindical.replace(',', '.'));
+            double taxa = ehSindicalizado ? Double.parseDouble(taxaSindical.replace(',', '.')) : 0.0;
+
             if (taxa < 0) throw new Exception("Taxa sindical deve ser nao-negativa.");
-            this.sistemaFolha.alteraEmpregado(emp, atributo, true, idSindicato, taxa);
+
+            this.sistemaFolha.alteraEmpregado(emp, atributo, valor, idSindicato, String.valueOf(taxa));
         } catch (NumberFormatException e) {
             throw new Exception("Taxa sindical deve ser numerica.");
         }
     }
 
     public void alteraEmpregado(String emp, String atributo, String valor1, String banco, String agencia, String contaCorrente) throws Exception {
-        if (!"metodoPagamento".equalsIgnoreCase(atributo)) throw new Exception("Atributo nao existe.");
-        if (!"banco".equalsIgnoreCase(valor1)) throw new Exception("Metodo de pagamento invalido.");
+        if (!"metodoPagamento".equalsIgnoreCase(atributo) || !"banco".equalsIgnoreCase(valor1)) {
+            throw new Exception("Atributo ou metodo de pagamento invalido.");
+        }
         if (banco == null || banco.isEmpty()) throw new Exception("Banco nao pode ser nulo.");
         if (agencia == null || agencia.isEmpty()) throw new Exception("Agencia nao pode ser nulo.");
         if (contaCorrente == null || contaCorrente.isEmpty()) throw new Exception("Conta corrente nao pode ser nulo.");
         this.sistemaFolha.alteraEmpregado(emp, atributo, valor1, banco, agencia, contaCorrente);
+    }
+        public void criarAgendaDePagamentos(String descricao) throws Exception {
+        this.sistemaFolha.criarAgendaDePagamentos(descricao);
     }
 
     public String getAtributoEmpregado(String emp, String atributo) throws Exception {
@@ -122,6 +147,8 @@ public class Facade {
     public String getVendasRealizadas(String emp, String dataInicial, String dataFinal) throws Exception {
         return this.sistemaFolha.getVendasRealizadas(emp, dataInicial, dataFinal);
     }
+
+
 
     public String getTaxasServico(String emp, String dataInicial, String dataFinal) throws Exception {
         return this.sistemaFolha.getTaxasServico(emp, dataInicial, dataFinal);

@@ -25,7 +25,7 @@ public abstract class Empregado {
         this.metodoPagamento = new EmMaos();
         this.dataUltimoPagamento = null;
 
-        // Definindo a agenda padrão
+
         if (tipo.equalsIgnoreCase("horista")) {
             this.agendaPagamento = "semanal 5";
         } else if (tipo.equalsIgnoreCase("assalariado")) {

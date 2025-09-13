@@ -6,7 +6,6 @@ public class CartaoDePonto {
     private LocalDate data;
     private double horas;
 
-    // Construtor vazio (obrigatório para XMLEncoder)
     public CartaoDePonto() {}
 
     public CartaoDePonto(LocalDate data, double horas) {
@@ -14,7 +13,6 @@ public class CartaoDePonto {
         this.horas = horas;
     }
 
-    // Getters e Setters para todos os atributos
     public LocalDate getData() {
         return data;
     }

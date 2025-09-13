@@ -4,13 +4,13 @@ import java.time.LocalDate;
 
 public class ResultadoDaVenda {
     private LocalDate dataVenda;
-    private Double valorVenda;
+    private double valor;
 
     public ResultadoDaVenda() {}
 
-    public ResultadoDaVenda(LocalDate dataVenda, Double valorVenda) {
-        this.dataVenda = dataVenda;
-        this.valorVenda = valorVenda;
+    public ResultadoDaVenda(LocalDate data, double valor) {
+        this.dataVenda = data;
+        this.valor = valor;
     }
 
     public LocalDate getDataVenda() {
@@ -21,11 +21,11 @@ public class ResultadoDaVenda {
         this.dataVenda = dataVenda;
     }
 
-    public Double getValorVenda() {
-        return valorVenda;
+    public double getValor() {
+        return valor;
     }
 
-    public void setValorVenda(Double valorVenda) {
-        this.valorVenda = valorVenda;
+    public void setValor(double valor) {
+        this.valor = valor;
     }
 }
