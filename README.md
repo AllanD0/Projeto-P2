@@ -1,87 +1,95 @@
-Sistema de Folha de Pagamento - WePayU
-Este repositório contém a implementação do sistema de folha de pagamento WePayU, desenvolvido como parte de um projeto acadêmico. O foco principal do projeto é a construção da lógica de negócio (
+📑 Sistema de Folha de Pagamento - WePayU
 
-business logic) de um sistema robusto, capaz de gerenciar diferentes tipos de empregados, agendas de pagamento e regras de cálculo complexas.
+Este repositório contém a implementação do sistema de folha de pagamento WePayU, desenvolvido como parte de um projeto acadêmico.
 
+⚠️ Aviso: o sistema ainda não passou em 100% dos testes de aceitação. Algumas funcionalidades podem conter erros ou comportamentos inesperados.
 
-O sucesso do projeto é validado pela aprovação em 100% de uma suíte de testes de aceitação automatizados, fornecidos para simular os requisitos do cliente.
+O foco do projeto é a lógica de negócio (business logic): administrar corretamente os pagamentos dos empregados, respeitando os diferentes tipos de contratos, agendas de pagamento e regras de cálculo (salário, horas extras, comissões e deduções sindicais).
 
-✨ Funcionalidades Implementadas (User Stories)
-O sistema foi construído de forma incremental, seguindo as User Stories definidas na especificação do projeto. As funcionalidades implementadas incluem:
-
-
+✨ Funcionalidades (User Stories)
 
 US1: Adição de novos empregados (horistas, assalariados e comissionados).
 
+US2: Remoção de empregados.
 
-US2: Remoção de empregados do sistema.
+US3: Lançamento de cartões de ponto (horistas).
 
-
-US3: Lançamento de cartões de ponto para empregados horistas.
-
-
-US4: Lançamento de resultados de venda para empregados comissionados.
-
+US4: Lançamento de resultados de venda (comissionados).
 
 US5: Lançamento de taxas de serviço sindicais.
 
+US6: Alteração de dados de empregados (nome, endereço, tipo, método de pagamento, filiação sindical, etc.).
 
-US6: Alteração de detalhes de um empregado (nome, endereço, tipo, método de pagamento, filiação sindical, etc.).
+US7: Execução da folha de pagamento em uma data específica.
+
+US8: Sistema de Undo/Redo para operações que alteram o estado.
+
+US9: Suporte a diferentes agendas de pagamento (semanais, mensais, quinzenais).
+
+US10: Criação de novas agendas de pagamento customizadas.
+
+⚖️ Regras de Negócio
+
+Horistas: recebem por hora trabalhada; horas extras (>8h/dia) pagas a 150%. Pagos toda sexta-feira.
+
+Assalariados: recebem um salário fixo mensal; pagos no último dia útil do mês.
+
+Comissionados: salário fixo + comissão sobre vendas. Pagos a cada 2 sextas-feiras.
+
+Sindicato: empregados podem ser sindicalizados, pagando taxa sindical fixa + taxas de serviço ocasionais.
+
+Métodos de Pagamento: cheque em mãos, cheque pelos correios ou depósito em conta bancária.
+
+🏗️ Arquitetura
+
+Facade → ponto de entrada para os testes.
+
+Controller (SistemaFolha) → centraliza a lógica de negócio.
+
+Models → entidades principais (Empregado, CartaoDePonto, ResultadoDeVenda, etc.).
+
+Persistência → dados salvos em estado.xml via XMLEncoder/XMLDecoder.
+
+Undo/Redo (Memento) → snapshots do estado armazenados em pilhas.
+
+Strategy → cada tipo de empregado implementa sua própria regra de pagamento.
+
+🧪 Testes de Aceitação
+
+Os testes utilizam EasyAccept para validar os requisitos.
+
+Scripts localizados na pasta tests/ (ex.: us1.txt, us7.txt, ...).
+
+Execução: configure a Main class como entry point e rode os testes com o working directory definido como a pasta WePayU.
+
+🚀 Como Rodar
+
+Clone o repositório:
+
+git clone https://github.com/AllanD0/Projeto-P2.git
+cd Projeto-P2
 
 
-US7: Funcionalidade completa para rodar a folha de pagamento em uma data específica.
+Compile o projeto (Java 11+).
 
+Configure o classpath para incluir easyaccept.jar.
 
-US8: Sistema de Undo/Redo para todas as transações que alteram o estado do sistema.
+Rode a classe Main para executar os testes automatizados.
 
+📘 Glossário
 
-US9: Suporte a diferentes agendas de pagamento, que podem ser alteradas por empregado.
+Horista: empregado pago por hora trabalhada.
 
+Assalariado: empregado com salário mensal fixo.
 
-US10: Criação de novas agendas de pagamento customizadas pela administração.
+Comissionado: empregado com salário fixo + comissão sobre vendas.
 
-⚖️ Conceitos e Regras de Negócio
-O núcleo do sistema reside na sua capacidade de lidar com diferentes regras de pagamento e deduções.
+Cartão de Ponto: registro de horas trabalhadas por dia.
 
-Tipos de Empregados
-Horista: Recebe por hora. Horas trabalhadas além de 8 por dia são pagas com um adicional de 50% (taxa de 1.5). O pagamento é realizado toda sexta-feira.
+Resultado de Venda: registro de uma venda feita por um comissionado.
 
+Taxa Sindical: desconto periódico do sindicato.
 
-Assalariado: Recebe um salário mensal fixo. O pagamento é realizado no último dia útil do mês.
+Taxa de Serviço: desconto avulso lançado pelo sindicato.
 
-
-Comissionado: Recebe um salário base mais uma comissão percentual sobre suas vendas. O pagamento é quinzenal (a cada 2 sextas-feiras) e consiste em 2 semanas de salário fixo mais as comissões do período.
-
-
-
-Sindicato
-Empregados podem ser filiados a um sindicato, pagando uma taxa. Nos testes, essa taxa é definida como um valor 
-
-diário para flexibilizar o cálculo em diferentes agendas.
-
-O sindicato também pode lançar taxas de serviços avulsas que são descontadas no próximo pagamento do empregado.
-
-🏗️ Arquitetura e Design
-Arquitetura em Camadas: O sistema é separado em:
-
-Facade: A camada de entrada que "traduz" os comandos dos testes para o sistema.
-
-Controller (SistemaFolha): A classe central que orquestra toda a lógica de negócio.
-
-Models: As classes que representam as entidades do sistema (Empregado, CartaoDePonto, etc.), contendo os dados e as lógicas de cálculo específicas.
-
-Padrão Memento (Undo/Redo): A funcionalidade de Undo/Redo foi implementada utilizando duas pilhas (undoStack, redoStack) que armazenam snapshots (cópias profundas) do estado do sistema antes de cada alteração.
-
-Padrão Strategy: O cálculo de salários e deduções é implementado através de métodos abstratos na classe Empregado e implementações concretas nas subclasses, permitindo que cada tipo de empregado tenha sua própria "estratégia" de cálculo.
-
-
-Persistência: Os dados do sistema são salvos e carregados de um arquivo estado.xml utilizando as bibliotecas java.beans.XMLEncoder e java.beans.XMLDecoder.
-
-🚀 Como Executar os Testes
-O projeto utiliza a biblioteca EasyAccept para rodar os testes de aceitação.
-
-Pré-requisitos: Certifique-se de que o arquivo easyaccept.jar está configurado no classpath do projeto.
-
-Configuração: Na sua IDE, configure a execução da classe Main para que o Working Directory (Diretório de Trabalho) seja a pasta WePayU (a pasta que contém os diretórios tests, ok, src, etc.).
-
-Execução: Execute a classe Main, que contém as chamadas para os scripts de teste (ex: tests/us1.txt, tests/us7.txt, etc.).
+Rodar Folha: calcular e efetuar pagamentos em uma data.
