@@ -1,4 +1,4 @@
-istema de Folha de Pagamento - WePayU
+Sistema de Folha de Pagamento - WePayU
 Este repositório contém a implementação do sistema de folha de pagamento WePayU, desenvolvido como parte de um projeto acadêmico. O foco principal do projeto é a construção da lógica de negócio (
 
 business logic) de um sistema robusto, capaz de gerenciar diferentes tipos de empregados, agendas de pagamento e regras de cálculo complexas.
